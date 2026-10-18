@@ -179,7 +179,7 @@
     },
     {
       "area": "Marketing",
-      "done": false,
+      "done": true,
       "owner": "Jaydon",
       "title": "Phone numbers and Google Business Profiles for the 5 niche sites",
       "id": "niche-sites"
@@ -273,6 +273,6 @@
     }
   ],
   "meta": {
-    "updated": "2026-10-18T22:20:16.533Z"
+    "updated": "2026-10-18T22:20:26.091Z"
   }
 }
