@@ -126,6 +126,32 @@ td .mono{font-family:var(--mono);font-size:12.5px;user-select:all}
 .rate{font-family:var(--mono);font-size:12px;color:var(--muted);margin-top:4px}
 @media (max-width:700px){.meter{grid-template-columns:repeat(3,minmax(0,1fr))}.meter .ch,.meter .rbox{grid-column:1/-1}}
 
+
+/* calendar */
+.cal-h{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:10px}
+.cal-nav{display:flex;gap:6px;align-items:center}
+.cal-nav .wk{font-family:var(--mono);font-size:12px;color:var(--muted);min-width:120px;text-align:center}
+.week{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.day{background:var(--panel);min-height:132px;padding:8px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.day.today{background:var(--panel2);box-shadow:inset 0 3px 0 var(--amber)}
+.day-h{display:flex;justify-content:space-between;align-items:baseline;font-family:var(--display);letter-spacing:.03em}
+.day-h .dn{font-size:13px;color:var(--muted)}
+.day-h .dd{font-size:20px;line-height:1}
+.day.today .dd{color:var(--amber-ink)}
+.ev{border:1px solid var(--line);border-left:3px solid var(--amber);border-radius:4px;background:var(--panel2);font-size:13px;min-width:0}
+.ev[data-type="job"]{border-left-color:var(--info)}
+.ev[data-type="meeting"]{border-left-color:var(--ok)}
+.ev[data-type="deadline"]{border-left-color:var(--bad)}
+.ev summary{list-style:none;cursor:pointer;padding:6px 8px;display:grid;gap:1px}
+.ev summary::-webkit-details-marker{display:none}
+.ev summary:focus-visible{outline:2px solid var(--amber);outline-offset:1px}
+.ev .tm{font-family:var(--mono);font-size:12px;color:var(--amber-ink)}
+.ev .tt{font-weight:700;line-height:1.3;overflow-wrap:anywhere}
+.ev .wh{color:var(--muted);font-size:12px}
+.ev .body{padding:0 8px 8px;display:grid;gap:4px;font-size:13px;border-top:1px dashed var(--line);padding-top:6px}
+.ev .body b{font-weight:600;color:var(--muted);font-size:12px;display:block}
+.day .none{color:var(--muted);font-size:12px;opacity:.6}
+@media (max-width:760px){.week{grid-template-columns:minmax(0,1fr)}.day{min-height:0;flex-direction:row;align-items:flex-start;gap:10px}.day-h{flex-direction:column;align-items:center;width:44px;flex:none}.day .evs{flex:1;min-width:0;display:grid;gap:6px}.day.empty-m{display:none}}
 .note{color:var(--muted);font-size:13px}
 .empty{padding:16px 12px;color:var(--muted);font-size:14px}
 .ro-banner{font-size:13px;color:var(--muted)}
@@ -145,6 +171,13 @@ td .mono{font-family:var(--mono);font-size:12.5px;user-select:all}
     <div class="ro" id="ro-tasks"><div class="v" id="r-tasks">—</div><div class="l">Open to-dos</div></div>
   </div>
 
+
+  <section>
+    <div class="cal-h"><h2>Next 7 days <span class="count" id="c-cal"></span></h2>
+      <div class="cal-nav"><button class="btn" id="wk-prev" aria-label="Previous 7 days">◀</button><span class="wk" id="wk-label"></span><button class="btn" id="wk-next" aria-label="Next 7 days">▶</button><button class="btn" id="wk-today">Today</button></div></div>
+    <div class="week" id="week"></div>
+    <div class="note">Tap an appointment for details.</div>
+  </section>
   <section>
     <h2>Pipeline <span class="count" id="c-pipe"></span></h2>
     <div class="board-scroll"><div class="board" id="board"></div></div>
@@ -179,7 +212,7 @@ td .mono{font-family:var(--mono);font-size:12.5px;user-select:all}
 <script>
 const STAGES=[["contacted","In contact"],["talks","In talks"],["quoted","Quoted"],["won","Won / owed"],["paid","Paid"]];
 const STATUS={client:"Client",talks:"In talks",contact:"In contact",reach:"To reach out",partner:"Partner",team:"Team"};
-const state={pipeline:[],jobs:[],contacts:[],tasks:[],outreach:[],meta:null,canWrite:false,filter:"all"};
+const state={events:[],pipeline:[],jobs:[],contacts:[],tasks:[],outreach:[],meta:null,canWrite:false,filter:"all"};
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const gbp=n=>"£"+Number(n).toLocaleString("en-GB",{maximumFractionDigits:0});
@@ -189,7 +222,7 @@ function today(){const d=new Date();d.setHours(0,0,0,0);return d}
 function fmtD(d){return d.getDate()+" "+MON[d.getMonth()].charAt(0)+MON[d.getMonth()].slice(1).toLowerCase()}
 
 let db=null;
-function renderAll(){renderReadouts();renderBoard();renderTasks();renderJobs();renderContacts();renderOutreach();renderStamp()}
+function renderAll(){renderCal();renderReadouts();renderBoard();renderTasks();renderJobs();renderContacts();renderOutreach();renderStamp()}
 
 function renderStamp(){
   const u=state.meta&&state.meta.updated?new Date(state.meta.updated):null;
@@ -296,11 +329,29 @@ document.addEventListener("click",async e=>{
 });
 async function touch(){try{await db.doc("meta/info").set({updated:new Date().toISOString()})}catch(e){}}
 
+let wkOff=0;
+function monday(d){const x=new Date(d);x.setHours(0,0,0,0);x.setDate(x.getDate()-((x.getDay()+6)%7));return x}
+function iso(d){return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
+const DAYS=["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
+function renderCal(){
+  const start=today();start.setDate(start.getDate()+wkOff*7);
+  const end=new Date(start);end.setDate(end.getDate()+6);
+  $("wk-label").textContent=fmtD(start)+" to "+fmtD(end);
+  const t=iso(today());let n=0;
+  $("week").innerHTML=[0,1,2,3,4,5,6].map(i=>{const d=new Date(start);d.setDate(d.getDate()+i);const dn=DAYS[(d.getDay()+6)%7];const k=iso(d);
+    const evs=(state.events||[]).filter(e=>e.date===k).sort((a,b)=>(a.time||"").localeCompare(b.time||""));n+=evs.length;
+    return `<div class="day ${k===t?"today":""} ${evs.length?"":"empty-m"}"><div class="day-h"><span class="dn">${dn}</span><span class="dd">${d.getDate()}</span></div><div class="evs">${
+      evs.length?evs.map(e=>`<details class="ev" data-type="${esc(e.type||"")}"><summary>${e.time?`<span class="tm">${esc(e.time)}</span>`:""}<span class="tt">${esc(e.title)}</span>${e.who||e.location?`<span class="wh">${esc([e.who,e.location].filter(Boolean).join(", "))}</span>`:""}</summary><div class="body">
+        ${e.location?`<div><b>Where</b>${esc(e.location)}</div>`:""}${e.who?`<div><b>Who's attending</b>${esc(e.who)}</div>`:""}${e.description?`<div><b>Details</b>${esc(e.description)}</div>`:""}</div></details>`).join(""):`<span class="none">Free</span>`}</div></div>`}).join("");
+  $("c-cal").textContent=n?n+(n===1?" appointment":" appointments"):"Nothing booked";
+}
+$("wk-prev").onclick=()=>{wkOff--;renderCal()};$("wk-next").onclick=()=>{wkOff++;renderCal()};$("wk-today").onclick=()=>{wkOff=0;renderCal()};
+
 renderAll();
 (async()=>{
   try{
     const r=await fetch("data.json",{cache:"no-store"});const d=await r.json();
-    ["pipeline","jobs","contacts","tasks","outreach"].forEach(k=>state[k]=d[k]||[]);
+    ["pipeline","jobs","contacts","tasks","outreach","events"].forEach(k=>state[k]=d[k]||[]);
     state.meta=d.meta||null;
     $("lamp").classList.add("on");$("mode").textContent="Snapshot from the repo";
     renderAll();

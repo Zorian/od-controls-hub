@@ -36,6 +36,15 @@
       "updated": "2026-10-18T08:00:00Z",
       "value": "Inv 353 outstanding",
       "id": "yeepin"
+    },
+    {
+      "id": "maabc",
+      "name": "Dan George",
+      "company": "Mortlake Anglian & Alpha Boat Club (MAABC)",
+      "stage": "won",
+      "value": "£3,540 contract. £2,000 deposit received (inv 356)",
+      "next": "Schedule works. Invoice £1,540 balance on completion",
+      "updated": "2026-10-18T22:10:00Z"
     }
   ],
   "jobs": [
@@ -53,6 +62,24 @@
       "status": "tbc",
       "title": "First subcontract callout",
       "id": "optima-first"
+    },
+    {
+      "id": "slough-hotel-healthcheck",
+      "title": "Free BMS health check",
+      "client": "Hotel",
+      "site": "Slough",
+      "date": "2026-10-19",
+      "status": "upcoming",
+      "notes": "Bafana attending, 11:30am"
+    },
+    {
+      "id": "maabc-ahu",
+      "title": "AHU upgrade: iSMA controller replacing VES ACX",
+      "client": "MAABC (Dan George)",
+      "site": "Mortlake",
+      "status": "tbc",
+      "value": "£3,540",
+      "notes": "Deposit paid. Supply, install, panel mods, software, commissioning, handover. 6 month warranty."
     }
   ],
   "contacts": [
@@ -100,6 +127,15 @@
       "notes": "First client. Inv 353 £1,145 outstanding",
       "status": "client",
       "id": "yeepin"
+    },
+    {
+      "id": "dan-george",
+      "name": "Dan George",
+      "company": "Mortlake Anglian & Alpha Boat Club",
+      "role": "Secretary contact",
+      "status": "client",
+      "email": "secretary@maabc.com",
+      "notes": "AHU upgrade, £2k deposit paid, £1,540 due on completion"
     }
   ],
   "tasks": [
@@ -161,6 +197,22 @@
       "owner": "Jaydon",
       "title": "Finish VAT registration for OD Controls Limited",
       "id": "vat"
+    },
+    {
+      "id": "maabc-schedule",
+      "title": "Order parts and book in the MAABC AHU upgrade",
+      "owner": "Both",
+      "area": "Jobs",
+      "notes": "Deposit received, so works can be scheduled",
+      "done": false
+    },
+    {
+      "id": "maabc-balance",
+      "title": "Invoice MAABC the £1,540 balance on completion",
+      "owner": "Jaydon",
+      "area": "Finance",
+      "notes": "Quote ref ODC-Q-1525-250926",
+      "done": false
     }
   ],
   "outreach": [
@@ -193,6 +245,18 @@
     }
   ],
   "meta": {
-    "updated": "2026-10-18T12:00:00Z"
-  }
+    "updated": "2026-10-18T22:10:00Z"
+  },
+  "events": [
+    {
+      "id": "slough-hotel-healthcheck",
+      "date": "2026-10-19",
+      "time": "11:30",
+      "title": "Free BMS health check",
+      "type": "job",
+      "who": "Bafana",
+      "location": "Hotel, Slough",
+      "description": "Free BMS health check at the hotel. Check whether they already have a BMS contractor or contract; if not, pitch OD Controls as their go to callout provider, and if they do, offer to be their backup on call contractor."
+    }
+  ]
 }
