@@ -168,8 +168,9 @@
       "done": false,
       "due": "2026-10-31",
       "owner": "Bafana",
-      "title": "Upload receipts for bank transfers sent by Jaydon",
-      "id": "bafana-receipts"
+      "title": "Upload receipts for the £1,014.79 Jaydon transferred to you",
+      "id": "bafana-receipts",
+      "notes": "Bank transfer. Send by end of month"
     },
     {
       "area": "Finance",
@@ -301,6 +302,6 @@
     }
   ],
   "meta": {
-    "updated": "2026-10-18T22:50:00Z"
+    "updated": "2026-10-18T22:55:00Z"
   }
 }
