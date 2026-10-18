@@ -8,4 +8,4 @@ Internal hub for OD Controls (Jaydon Goldman and Bafana Khumalo): pipeline, jobs
 
 Updates are made by Claude on Jaydon's request, so every change is a commit with history.
 
-**Private repo.** Contains client names, phone numbers and money owed. Do not make public.
+**Live link:** https://zorian.github.io/od-controls-hub/
