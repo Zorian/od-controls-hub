@@ -1,13 +1,14 @@
 {
   "pipeline": [
     {
-      "company": "Contact: Ryan",
-      "name": "Gothic Villa",
-      "next": "Confirm invoiced and paid",
+      "company": "Highgate Property & Development (Gothic Villa, NW1)",
+      "name": "Ryan Cooper",
+      "next": "Chase invoice 357 (£250)",
       "stage": "won",
-      "updated": "2026-10-18T07:00:00Z",
-      "value": "Heating/BMS job, Oct 2026",
-      "id": "gothic-villa"
+      "updated": "2026-10-18T22:25:00Z",
+      "value": "Callout £500. £250 deposit paid, inv 357 balance due",
+      "id": "gothic-villa",
+      "owed": 250
     },
     {
       "company": "Highgate Property & Development",
@@ -45,15 +46,27 @@
       "value": "£3,540 contract. £2,000 deposit received (inv 356)",
       "next": "Schedule works. Invoice £1,540 balance on completion",
       "updated": "2026-10-18T22:10:00Z"
+    },
+    {
+      "id": "millennium-slough",
+      "name": "Jethi Thomas",
+      "company": "Millennium Hotels, Slough",
+      "stage": "talks",
+      "value": "Trend BMS. Backup contractor opportunity",
+      "next": "Health check Thu 22 Oct, 11:30 (Bafana)",
+      "updated": "2026-10-18T22:20:00Z"
     }
   ],
   "jobs": [
     {
-      "client": "Gothic Villa",
-      "notes": "Attended Oct 2026",
-      "status": "done",
-      "title": "Heating / BMS job",
-      "id": "gothic-villa"
+      "client": "Highgate Property (Ryan Cooper)",
+      "notes": "Inv 357: £250 balance unpaid",
+      "status": "invoiced",
+      "title": "LTHW radiator heating fault, Trend BMS",
+      "id": "gothic-villa",
+      "site": "Gothic Villa, Outer Circle, NW1 4HB",
+      "date": "2026-10-12",
+      "value": "£500"
     },
     {
       "client": "Optima Retail",
@@ -66,11 +79,11 @@
     {
       "id": "slough-hotel-healthcheck",
       "title": "Free BMS health check",
-      "client": "Hotel",
-      "site": "Slough",
-      "date": "2026-10-19",
+      "client": "Millennium Hotels",
+      "site": "Slough SL1 2YE",
+      "date": "2026-10-22",
       "status": "upcoming",
-      "notes": "Bafana attending, 11:30am"
+      "notes": "Bafana, 11:30. Trend BMS. Contact Jethi Thomas 07393 698735"
     },
     {
       "id": "maabc-ahu",
@@ -93,13 +106,6 @@
       "id": "bafana"
     },
     {
-      "company": "Gothic Villa",
-      "name": "Ryan",
-      "notes": "Heating/BMS job Oct 2026",
-      "status": "client",
-      "id": "gothic-villa"
-    },
-    {
       "company": "Hilton",
       "name": "Hilton",
       "notes": "Key client reference",
@@ -116,9 +122,9 @@
     {
       "company": "Highgate Property & Development",
       "name": "Ryan Cooper",
-      "notes": "Asked for bi-annual PPM quote",
+      "notes": "Owes £250 (inv 357, Gothic Villa callout). Asked for bi-annual PPM quote for his sites",
       "role": "Facilities Manager, many sites",
-      "status": "talks",
+      "status": "client",
       "id": "ryan-cooper"
     },
     {
@@ -136,6 +142,16 @@
       "status": "client",
       "email": "secretary@maabc.com",
       "notes": "AHU upgrade, £2k deposit paid, £1,540 due on completion"
+    },
+    {
+      "id": "jethi-thomas",
+      "name": "Jethi Thomas",
+      "company": "Millennium Hotels, Slough",
+      "role": "Chief Engineer",
+      "status": "talks",
+      "phone": "07393 698735",
+      "email": "jethi.thomas@millenniumhotels.co.uk",
+      "notes": "Trend BMS, has a contractor already. Health check Thu 22 Oct 11:30; pitch as backup"
     }
   ],
   "tasks": [
@@ -213,6 +229,14 @@
       "area": "Finance",
       "notes": "Quote ref ODC-Q-1525-250926",
       "done": false
+    },
+    {
+      "id": "chase-highgate-357",
+      "title": "Chase Ryan Cooper for invoice 357 (£250)",
+      "owner": "Jaydon",
+      "area": "Finance",
+      "notes": "Gothic Villa callout, 12 Oct. Due on receipt",
+      "done": false
     }
   ],
   "outreach": [
@@ -245,18 +269,18 @@
     }
   ],
   "meta": {
-    "updated": "2026-10-18T22:10:00Z"
+    "updated": "2026-10-18T22:20:00Z"
   },
   "events": [
     {
       "id": "slough-hotel-healthcheck",
-      "date": "2026-10-19",
+      "date": "2026-10-22",
       "time": "11:30",
-      "title": "Free BMS health check",
+      "title": "Free BMS health check: Millennium Hotels",
       "type": "job",
       "who": "Bafana",
-      "location": "Hotel, Slough",
-      "description": "Free BMS health check at the hotel. Check whether they already have a BMS contractor or contract; if not, pitch OD Controls as their go to callout provider, and if they do, offer to be their backup on call contractor."
+      "location": "Millennium Hotels, Slough SL1 2YE",
+      "description": "Site contact: Jethi Thomas, Chief Engineer, 07393 698735 (office 01753 516222). BMS: Trend. They already have a BMS contractor, so pitch OD Controls as their backup / on call contractor. Issue to look at: BMS controls. Access Mon to Thu, 9am to 2pm."
     }
   ]
 }

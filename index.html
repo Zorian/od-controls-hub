@@ -152,6 +152,27 @@ td .mono{font-family:var(--mono);font-size:12.5px;user-select:all}
 .ev .body b{font-weight:600;color:var(--muted);font-size:12px;display:block}
 .day .none{color:var(--muted);font-size:12px;opacity:.6}
 @media (max-width:760px){.week{grid-template-columns:minmax(0,1fr)}.day{min-height:0;flex-direction:row;align-items:flex-start;gap:10px}.day-h{flex-direction:column;align-items:center;width:44px;flex:none}.day .evs{flex:1;min-width:0;display:grid;gap:6px}.day.empty-m{display:none}}
+/* editing + drag */
+.edit-bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:flex-end;margin-top:6px}
+.edit-form{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:12px;border:1px solid var(--amber);border-radius:6px;background:var(--panel)}
+.edit-form input{font:inherit;font-size:13px;padding:6px 9px;border:1px solid var(--line);border-radius:4px;background:var(--panel2);color:var(--fg);min-width:0;flex:1 1 240px}
+.edit-form p{margin:0;flex-basis:100%;font-size:13px;color:var(--muted)}
+.btn.primary{background:var(--amber);border-color:var(--amber);color:var(--on-amber);font-weight:700}
+.save-state{font-family:var(--mono);font-size:12px;color:var(--muted)}
+.save-state.err{color:var(--bad)}
+.grip{display:none;cursor:grab;touch-action:none;user-select:none;color:var(--muted);font-size:15px;line-height:1;padding:2px 4px;border-radius:3px}
+.editing .grip{display:inline-block}
+.grip:hover{color:var(--amber-ink)}
+.card .top-row{display:flex;justify-content:space-between;gap:6px;align-items:start}
+.ev summary{position:relative}
+.ev .grip{position:absolute;top:4px;right:4px}
+.editing .ev summary{padding-right:26px}
+.editing .card{cursor:grab}
+.dragging{opacity:.35}
+.ghost{position:fixed;z-index:50;pointer-events:none;width:220px;transform:rotate(2deg);box-shadow:0 10px 24px rgba(0,0,0,.35);opacity:.95}
+.drop-ok{outline:2px dashed var(--amber);outline-offset:-3px}
+.editing .day.empty-m{display:flex}
+body.is-dragging{user-select:none;cursor:grabbing}
 .note{color:var(--muted);font-size:13px}
 .empty{padding:16px 12px;color:var(--muted);font-size:14px}
 .ro-banner{font-size:13px;color:var(--muted)}
@@ -161,8 +182,14 @@ td .mono{font-family:var(--mono);font-size:12.5px;user-select:all}
 <div class="wrap">
   <header class="top">
     <h1>OD <b>CONTROLS</b> HQ</h1>
-    <div class="stamp"><span class="lamp" id="lamp"></span><span id="stamp">Connecting…</span><div id="mode" class="ro-banner"></div></div>
+    <div class="stamp"><span class="lamp" id="lamp"></span><span id="stamp">Connecting…</span><div id="mode" class="ro-banner"></div><div class="edit-bar"><span class="save-state" id="save-state" aria-live="polite"></span><button class="btn" id="edit-toggle">Unlock editing</button></div></div>
   </header>
+
+  <form class="edit-form" id="edit-form" hidden>
+    <p>Paste your GitHub access token to drag, drop and tick things. It stays in this browser only. Without it the hub is view only.</p>
+    <label for="tok" class="note">Token</label><input id="tok" type="password" autocomplete="off" placeholder="github_pat_…">
+    <button class="btn primary" type="submit">Unlock</button><button class="btn" type="button" id="edit-cancel">Cancel</button>
+  </form>
 
   <div class="readouts" aria-label="Summary">
     <div class="ro"><div class="v" id="r-pipe">—</div><div class="l">Live deals in pipeline</div></div>
@@ -244,9 +271,9 @@ function renderBoard(){
   $("c-pipe").textContent=state.pipeline.length?state.pipeline.length+" deals":"";
   $("board").innerHTML=STAGES.map(([k,label],i)=>{
     const items=state.pipeline.filter(p=>p.stage===k).sort((a,b)=>(b.updated||"").localeCompare(a.updated||""));
-    return `<div class="col" data-stage="${k}"><div class="col-h">${label}<small>${items.length}</small></div>${
-      items.length?items.map(p=>`<div class="card" data-stage="${k}">
-        <div class="n">${esc(p.name)}</div>
+    return `<div class="col" data-stage="${k}" data-drop="stage"><div class="col-h">${label}<small>${items.length}</small></div>${
+      items.length?items.map(p=>`<div class="card" data-stage="${k}" data-id="${esc(p.id)}">
+        <div class="top-row"><div class="n">${esc(p.name)}</div><span class="grip" aria-hidden="true">⠿</span></div>
         ${p.company?`<div class="c">${esc(p.company)}</div>`:""}
         ${p.value?`<div class="val">${esc(p.value)}</div>`:""}
         ${p.owed?`<div class="val" style="color:var(--warn)">Owed ${gbp(p.owed)}</div>`:""}
@@ -319,15 +346,101 @@ function renderOutreach(){
     </div>`}).join("");
 }
 
-document.addEventListener("click",async e=>{
+document.addEventListener("click",e=>{
+  if(Date.now()-justDragged<300){e.preventDefault();return}
   const f=e.target.closest("[data-filter]"); if(f){state.filter=f.dataset.filter;renderContacts();return}
-  if(!db||!state.canWrite)return;
+  if(!state.canWrite)return;
   const m=e.target.closest("[data-move]");
-  if(m){m.disabled=true;try{await db.doc("pipeline/"+m.dataset.move).update({stage:m.dataset.to,updated:new Date().toISOString()});await touch()}catch(err){m.disabled=false}return}
+  if(m){const p=state.pipeline.find(x=>x.id===m.dataset.move);if(p){p.stage=m.dataset.to;p.updated=new Date().toISOString();renderAll();queueSave("Move "+p.name)}return}
   const t=e.target.closest("[data-tick]");
-  if(t){const task=state.tasks.find(x=>x.id===t.dataset.tick);if(!task)return;t.disabled=true;try{await db.doc("tasks/"+task.id).update({done:!task.done});await touch()}catch(err){}t.disabled=false}
+  if(t){const task=state.tasks.find(x=>x.id===t.dataset.tick);if(task){task.done=!task.done;renderAll();queueSave((task.done?"Done: ":"Reopen: ")+task.title)}}
 });
-async function touch(){try{await db.doc("meta/info").set({updated:new Date().toISOString()})}catch(e){}}
+
+/* ---------- GitHub save ---------- */
+const REPO="Zorian/od-controls-hub", API="https://api.github.com/repos/"+REPO+"/contents/data.json";
+let token=null, sha=null, saveTimer=null, saveMsgs=[], saving=false;
+try{token=localStorage.getItem("odhub_token")}catch(e){}
+function setSave(txt,err){const el=$("save-state");el.textContent=txt;el.classList.toggle("err",!!err)}
+function b64enc(str){const b=new TextEncoder().encode(str);let s="";b.forEach(c=>s+=String.fromCharCode(c));return btoa(s)}
+function b64dec(b64){const bin=atob(b64.replace(/\n/g,""));return new TextDecoder().decode(Uint8Array.from(bin,c=>c.charCodeAt(0)))}
+function applyData(d){["pipeline","jobs","contacts","tasks","outreach","events"].forEach(k=>state[k]=d[k]||[]);state.meta=d.meta||null}
+function snapshot(){const o={};["pipeline","jobs","contacts","tasks","outreach","events"].forEach(k=>o[k]=state[k]);o.meta={...(state.meta||{}),updated:new Date().toISOString()};return o}
+async function loadFromApi(){
+  const r=await fetch(API+"?ref=main&t="+Date.now(),{headers:{Authorization:"Bearer "+token,Accept:"application/vnd.github+json"}});
+  if(r.status===401||r.status===403||r.status===404)throw new Error("auth");
+  if(!r.ok)throw new Error("net");
+  const j=await r.json();sha=j.sha;applyData(JSON.parse(b64dec(j.content)));
+}
+function queueSave(msg){saveMsgs.push(msg);setSave("Unsaved changes…");clearTimeout(saveTimer);saveTimer=setTimeout(doSave,900)}
+async function doSave(){
+  if(saving){clearTimeout(saveTimer);saveTimer=setTimeout(doSave,600);return}
+  saving=true;setSave("Saving…");
+  const data=snapshot();const msg=saveMsgs.splice(0).slice(0,5).join("; ")||"Update hub";
+  try{
+    const r=await fetch(API,{method:"PUT",headers:{Authorization:"Bearer "+token,Accept:"application/vnd.github+json","Content-Type":"application/json"},
+      body:JSON.stringify({message:msg+" (from hub)",content:b64enc(JSON.stringify(data,null,2)+"\n"),sha,branch:"main"})});
+    if(r.status===409||r.status===422){setSave("Someone else changed the hub. Reloaded the latest, redo your last move.",true);await loadFromApi();renderAll();}
+    else if(!r.ok){setSave(r.status===401||r.status===403?"Save refused: check the token has write access to this repo.":"Save failed. Check your connection and try again.",true)}
+    else{const j=await r.json();sha=j.content.sha;state.meta=data.meta;renderStamp();setSave("Saved")}
+  }catch(e){setSave("Save failed. Check your connection and try again.",true)}
+  saving=false;
+}
+function setEditing(on){
+  state.canWrite=on;document.body.classList.toggle("editing",on);
+  $("edit-toggle").textContent=on?"Lock editing":"Unlock editing";
+  $("mode").textContent=on?"Editing: drag cards and appointments, tick to-dos":"View only";
+  renderAll();
+}
+$("edit-toggle").onclick=()=>{
+  if(state.canWrite){try{localStorage.removeItem("odhub_token")}catch(e){}token=null;setEditing(false);setSave("");return}
+  $("edit-form").hidden=false;$("tok").focus();
+};
+$("edit-cancel").onclick=()=>{$("edit-form").hidden=true};
+$("edit-form").addEventListener("submit",async e=>{
+  e.preventDefault();const v=$("tok").value.trim();if(!v)return;token=v;setSave("Checking token…");
+  try{await loadFromApi();try{localStorage.setItem("odhub_token",v)}catch(e){}$("edit-form").hidden=true;$("tok").value="";setEditing(true);setSave("Unlocked")}
+  catch(err){token=null;setSave(err.message==="auth"?"That token can't open this repo. Check it and try again.":"Couldn't reach GitHub. Try again.",true)}
+});
+
+/* ---------- drag and drop (mouse + touch) ---------- */
+let drag=null, justDragged=0;
+document.addEventListener("pointerdown",e=>{
+  if(!state.canWrite||e.button>0)return;
+  const item=e.target.closest(".card[data-id],.ev[data-eid]");if(!item)return;
+  const onGrip=!!e.target.closest(".grip");
+  if(!onGrip&&(e.pointerType!=="mouse"||e.target.closest("button,a,input")))return;
+  drag={item,x:e.clientX,y:e.clientY,started:false,id:e.pointerId,kind:item.dataset.id?"stage":"date"};
+  if(onGrip)e.preventDefault();
+});
+document.addEventListener("pointermove",e=>{
+  if(!drag||e.pointerId!==drag.id)return;
+  if(!drag.started){
+    if(Math.hypot(e.clientX-drag.x,e.clientY-drag.y)<6)return;
+    drag.started=true;const r=drag.item.getBoundingClientRect();
+    drag.ghost=drag.item.cloneNode(true);drag.ghost.classList.add("ghost");drag.ghost.style.width=Math.min(r.width,260)+"px";
+    if(drag.ghost.tagName==="DETAILS")drag.ghost.open=false;
+    drag.ox=e.clientX-r.left;drag.oy=e.clientY-r.top;document.body.appendChild(drag.ghost);
+    drag.item.classList.add("dragging");document.body.classList.add("is-dragging");
+  }
+  e.preventDefault();
+  drag.ghost.style.left=(e.clientX-drag.ox)+"px";drag.ghost.style.top=(e.clientY-drag.oy)+"px";
+  const tgt=document.elementFromPoint(e.clientX,e.clientY)?.closest(`[data-drop="${drag.kind}"]`)||null;
+  if(tgt!==drag.over){drag.over?.classList.remove("drop-ok");tgt?.classList.add("drop-ok");drag.over=tgt}
+  const edge=60;if(e.clientY<edge)scrollBy(0,-12);else if(e.clientY>innerHeight-edge)scrollBy(0,12);
+},{passive:false});
+function endDrag(e){
+  if(!drag||(e&&e.pointerId!==drag.id))return;
+  const d=drag;drag=null;
+  if(!d.started)return;
+  justDragged=Date.now();d.ghost.remove();d.item.classList.remove("dragging");document.body.classList.remove("is-dragging");d.over?.classList.remove("drop-ok");
+  if(!d.over||!e)return;
+  if(d.kind==="stage"){const p=state.pipeline.find(x=>x.id===d.item.dataset.id),to=d.over.dataset.stage;
+    if(p&&p.stage!==to){p.stage=to;p.updated=new Date().toISOString();renderAll();queueSave("Move "+p.name+" to "+(STAGES.find(s=>s[0]===to)||[,to])[1])}}
+  else{const ev=state.events.find(x=>x.id===d.item.dataset.eid),to=d.over.dataset.date;
+    if(ev&&ev.date!==to){ev.date=to;const j=state.jobs.find(x=>x.id===ev.id);if(j)j.date=to;renderAll();queueSave("Reschedule "+ev.title+" to "+to)}}
+}
+document.addEventListener("pointerup",endDrag);
+document.addEventListener("pointercancel",()=>endDrag(null));
 
 let wkOff=0;
 function monday(d){const x=new Date(d);x.setHours(0,0,0,0);x.setDate(x.getDate()-((x.getDay()+6)%7));return x}
@@ -340,8 +453,8 @@ function renderCal(){
   const t=iso(today());let n=0;
   $("week").innerHTML=[0,1,2,3,4,5,6].map(i=>{const d=new Date(start);d.setDate(d.getDate()+i);const dn=DAYS[(d.getDay()+6)%7];const k=iso(d);
     const evs=(state.events||[]).filter(e=>e.date===k).sort((a,b)=>(a.time||"").localeCompare(b.time||""));n+=evs.length;
-    return `<div class="day ${k===t?"today":""} ${evs.length?"":"empty-m"}"><div class="day-h"><span class="dn">${dn}</span><span class="dd">${d.getDate()}</span></div><div class="evs">${
-      evs.length?evs.map(e=>`<details class="ev" data-type="${esc(e.type||"")}"><summary>${e.time?`<span class="tm">${esc(e.time)}</span>`:""}<span class="tt">${esc(e.title)}</span>${e.who||e.location?`<span class="wh">${esc([e.who,e.location].filter(Boolean).join(", "))}</span>`:""}</summary><div class="body">
+    return `<div class="day ${k===t?"today":""} ${evs.length?"":"empty-m"}" data-drop="date" data-date="${k}"><div class="day-h"><span class="dn">${dn}</span><span class="dd">${d.getDate()}</span></div><div class="evs">${
+      evs.length?evs.map(e=>`<details class="ev" data-type="${esc(e.type||"")}" data-eid="${esc(e.id)}"><summary><span class="grip" aria-hidden="true">⠿</span>${e.time?`<span class="tm">${esc(e.time)}</span>`:""}<span class="tt">${esc(e.title)}</span>${e.who||e.location?`<span class="wh">${esc([e.who,e.location].filter(Boolean).join(", "))}</span>`:""}</summary><div class="body">
         ${e.location?`<div><b>Where</b>${esc(e.location)}</div>`:""}${e.who?`<div><b>Who's attending</b>${esc(e.who)}</div>`:""}${e.description?`<div><b>Details</b>${esc(e.description)}</div>`:""}</div></details>`).join(""):`<span class="none">Free</span>`}</div></div>`}).join("");
   $("c-cal").textContent=n?n+(n===1?" appointment":" appointments"):"Nothing booked";
 }
@@ -349,12 +462,13 @@ $("wk-prev").onclick=()=>{wkOff--;renderCal()};$("wk-next").onclick=()=>{wkOff++
 
 renderAll();
 (async()=>{
+  if(token){
+    try{await loadFromApi();$("lamp").classList.add("on");setEditing(true);return}
+    catch(e){token=null;try{localStorage.removeItem("odhub_token")}catch(_){};setSave("Saved token stopped working. Unlock again to edit.",true)}
+  }
   try{
-    const r=await fetch("data.json",{cache:"no-store"});const d=await r.json();
-    ["pipeline","jobs","contacts","tasks","outreach","events"].forEach(k=>state[k]=d[k]||[]);
-    state.meta=d.meta||null;
-    $("lamp").classList.add("on");$("mode").textContent="Snapshot from the repo";
-    renderAll();
+    const r=await fetch("data.json?"+Date.now(),{cache:"no-store"});const d=await r.json();
+    applyData(d);$("lamp").classList.add("on");$("mode").textContent="View only";renderAll();
   }catch(e){$("stamp").textContent="Couldn't load data.json"}
 })();
 </script>
