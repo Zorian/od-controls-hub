@@ -14,8 +14,8 @@
       "company": "Highgate Property & Development",
       "name": "Ryan Cooper",
       "next": "Send bi-annual PPM quote (per site)",
-      "stage": "talks",
-      "updated": "2026-10-18T10:00:00Z",
+      "stage": "quoted",
+      "updated": "2026-10-18T22:19:09.773Z",
       "value": "PPM £1,000/site/yr, multiple sites",
       "id": "highgate"
     },
@@ -267,9 +267,6 @@
       "id": "linkedin"
     }
   ],
-  "meta": {
-    "updated": "2026-10-18T22:30:00Z"
-  },
   "events": [
     {
       "id": "slough-hotel-healthcheck",
@@ -281,5 +278,8 @@
       "location": "Millennium Hotels, Slough SL1 2YE",
       "description": "Site contact: Jethi Thomas, Chief Engineer, 07393 698735 (office 01753 516222). BMS: Trend. They already have a BMS contractor, so pitch OD Controls as their backup / on call contractor. Issue to look at: BMS controls. Access Mon to Thu, 9am to 2pm."
     }
-  ]
+  ],
+  "meta": {
+    "updated": "2026-10-18T22:19:10.679Z"
+  }
 }
