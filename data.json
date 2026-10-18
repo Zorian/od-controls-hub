@@ -1,0 +1,198 @@
+{
+  "pipeline": [
+    {
+      "company": "Contact: Ryan",
+      "name": "Gothic Villa",
+      "next": "Confirm invoiced and paid",
+      "stage": "won",
+      "updated": "2026-10-18T07:00:00Z",
+      "value": "Heating/BMS job, Oct 2026",
+      "id": "gothic-villa"
+    },
+    {
+      "company": "Highgate Property & Development",
+      "name": "Ryan Cooper",
+      "next": "Send bi-annual PPM quote (per site)",
+      "stage": "talks",
+      "updated": "2026-10-18T10:00:00Z",
+      "value": "PPM £1,000/site/yr, multiple sites",
+      "id": "highgate"
+    },
+    {
+      "company": "Subcontract, Ashford/Canterbury retail",
+      "name": "Optima Retail",
+      "next": "Finish onboarding, get first job booked",
+      "stage": "talks",
+      "updated": "2026-10-18T09:00:00Z",
+      "value": "Ongoing subcontract work",
+      "id": "optima"
+    },
+    {
+      "company": "BMS controller supply, install, programming",
+      "name": "Yeepin Ltd",
+      "next": "Chase invoice 353 (£1,145)",
+      "owed": 1145,
+      "stage": "won",
+      "updated": "2026-10-18T08:00:00Z",
+      "value": "Inv 353 outstanding",
+      "id": "yeepin"
+    }
+  ],
+  "jobs": [
+    {
+      "client": "Gothic Villa",
+      "notes": "Attended Oct 2026",
+      "status": "done",
+      "title": "Heating / BMS job",
+      "id": "gothic-villa"
+    },
+    {
+      "client": "Optima Retail",
+      "notes": "Waiting on onboarding",
+      "site": "Ashford / Canterbury",
+      "status": "tbc",
+      "title": "First subcontract callout",
+      "id": "optima-first"
+    }
+  ],
+  "contacts": [
+    {
+      "company": "OD Controls",
+      "email": "solutions@od-controls.com",
+      "name": "Bafana Khumalo",
+      "phone": "07939 652804",
+      "role": "Technical Director",
+      "status": "team",
+      "id": "bafana"
+    },
+    {
+      "company": "Gothic Villa",
+      "name": "Ryan",
+      "notes": "Heating/BMS job Oct 2026",
+      "status": "client",
+      "id": "gothic-villa"
+    },
+    {
+      "company": "Hilton",
+      "name": "Hilton",
+      "notes": "Key client reference",
+      "status": "client",
+      "id": "hilton"
+    },
+    {
+      "company": "Optima Retail",
+      "name": "Optima Retail",
+      "notes": "Supplier form done; subcontract for Ashford/Canterbury",
+      "status": "partner",
+      "id": "optima"
+    },
+    {
+      "company": "Highgate Property & Development",
+      "name": "Ryan Cooper",
+      "notes": "Asked for bi-annual PPM quote",
+      "role": "Facilities Manager, many sites",
+      "status": "talks",
+      "id": "ryan-cooper"
+    },
+    {
+      "company": "Yeepin Ltd",
+      "name": "Yeepin Ltd",
+      "notes": "First client. Inv 353 £1,145 outstanding",
+      "status": "client",
+      "id": "yeepin"
+    }
+  ],
+  "tasks": [
+    {
+      "area": "Admin",
+      "done": false,
+      "notes": "Partner company is supplier of record until then",
+      "owner": "Both",
+      "title": "Get own accreditation (e.g. CHAS)",
+      "id": "accreditation"
+    },
+    {
+      "area": "Finance",
+      "done": false,
+      "due": "2026-10-31",
+      "owner": "Bafana",
+      "title": "Upload receipts for bank transfers sent by Jaydon",
+      "id": "bafana-receipts"
+    },
+    {
+      "area": "Finance",
+      "done": false,
+      "owner": "Jaydon",
+      "title": "Chase Yeepin invoice 353 (£1,145)",
+      "id": "chase-yeepin"
+    },
+    {
+      "area": "Outreach",
+      "done": false,
+      "owner": "Jaydon",
+      "title": "Start FM company subcontract outreach",
+      "id": "fm-outreach"
+    },
+    {
+      "area": "Marketing",
+      "done": false,
+      "owner": "Jaydon",
+      "title": "Phone numbers and Google Business Profiles for the 5 niche sites",
+      "id": "niche-sites"
+    },
+    {
+      "area": "Sales",
+      "done": false,
+      "notes": "£1,000 per site per year, 2 weekday visits",
+      "owner": "Jaydon",
+      "title": "Send Ryan Cooper bi-annual PPM quote",
+      "id": "ppm-quote"
+    },
+    {
+      "area": "Marketing",
+      "done": false,
+      "owner": "Both",
+      "title": "Add training as a service",
+      "id": "training"
+    },
+    {
+      "area": "Admin",
+      "done": false,
+      "owner": "Jaydon",
+      "title": "Finish VAT registration for OD Controls Limited",
+      "id": "vat"
+    }
+  ],
+  "outreach": [
+    {
+      "booked": null,
+      "channel": "Cold email",
+      "note": "Sales Nav, Apollo, Instantly. Not started",
+      "order": 2,
+      "replies": null,
+      "sent": null,
+      "id": "cold-email"
+    },
+    {
+      "booked": null,
+      "channel": "FM partners",
+      "note": "Subcontract approach. Not started",
+      "order": 3,
+      "replies": null,
+      "sent": null,
+      "id": "fm-partners"
+    },
+    {
+      "booked": null,
+      "channel": "LinkedIn DMs",
+      "note": "Free BMS health check offer, daily",
+      "order": 1,
+      "replies": null,
+      "sent": null,
+      "id": "linkedin"
+    }
+  ],
+  "meta": {
+    "updated": "2026-10-18T12:00:00Z"
+  }
+}

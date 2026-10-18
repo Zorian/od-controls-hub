@@ -1,0 +1,311 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>OD Controls HQ</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Antonio:wght@500;700&family=Manrope:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: plant-room control panel. Header strip, status readouts, full-width pipeline board, then tasks | jobs, contacts, outreach. */
+:root{
+  --bg:#0A0B0D; --panel:#121418; --panel2:#181B20; --line:#262A31; --fg:#ECEDEF; --muted:#8B909A;
+  --amber:#FFB800; --amber-ink:#FFB800; --on-amber:#0A0B0D;
+  --ok:#3DD68C; --warn:#FF9F43; --bad:#FF5C5C; --info:#6CB6FF;
+  --display:'Antonio',Impact,'Arial Narrow',sans-serif;
+  --body:'Manrope',system-ui,-apple-system,sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,Menlo,monospace;
+  color-scheme:dark;
+}
+@media (prefers-color-scheme: light){:root:not([data-theme="dark"]){
+  --bg:#F3F3EF; --panel:#FFFFFF; --panel2:#F8F8F5; --line:#DCDDD7; --fg:#15171B; --muted:#5D626B;
+  --amber:#FFB800; --amber-ink:#8A6200; --on-amber:#15171B;
+  --ok:#11804E; --warn:#B4580E; --bad:#C2352B; --info:#1F6FC2; color-scheme:light}}
+:root[data-theme="light"]{
+  --bg:#F3F3EF; --panel:#FFFFFF; --panel2:#F8F8F5; --line:#DCDDD7; --fg:#15171B; --muted:#5D626B;
+  --amber:#FFB800; --amber-ink:#8A6200; --on-amber:#15171B;
+  --ok:#11804E; --warn:#B4580E; --bad:#C2352B; --info:#1F6FC2; color-scheme:light}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:15px;line-height:1.5}
+.wrap{max-width:1240px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 56px;display:grid;gap:28px}
+h1,h2{font-family:var(--display);font-weight:700;letter-spacing:.02em;margin:0;text-wrap:balance}
+h1{font-size:clamp(34px,6vw,52px);line-height:1}
+h1 b{color:var(--amber-ink);font-weight:700}
+h2{font-size:22px;display:flex;align-items:baseline;gap:10px}
+h2 .count{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:400;letter-spacing:0}
+.top{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:12px;border-bottom:3px solid var(--amber);padding-bottom:14px}
+.stamp{font-family:var(--mono);font-size:12px;color:var(--muted);text-align:right}
+.lamp{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--muted);margin-right:6px;vertical-align:middle}
+.lamp.on{background:var(--ok);box-shadow:0 0 8px var(--ok)}
+
+/* readouts */
+.readouts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.ro{background:var(--panel);padding:14px 16px;min-width:0}
+.ro .v{font-family:var(--display);font-size:32px;line-height:1.1;font-variant-numeric:tabular-nums}
+.ro .l{color:var(--muted);font-size:13px}
+.ro.alert .v{color:var(--warn)}
+@media (max-width:640px){.readouts{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* board */
+.board-scroll{overflow-x:auto;padding-bottom:6px}
+.board{display:grid;grid-template-columns:repeat(5,minmax(220px,1fr));gap:10px;min-width:1150px}
+@media (min-width:1200px){.board{min-width:0}}
+.col{background:var(--panel2);border:1px solid var(--line);border-radius:6px;padding:10px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.col-h{display:flex;justify-content:space-between;align-items:center;font-family:var(--display);font-size:16px;letter-spacing:.03em;padding:2px 4px 6px;border-bottom:1px solid var(--line)}
+.col-h small{font-family:var(--mono);font-size:11px;color:var(--muted)}
+.col[data-stage="won"] .col-h{color:var(--info)}
+.col[data-stage="paid"] .col-h{color:var(--ok)}
+.card{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--line);border-radius:4px;padding:10px 11px;display:grid;gap:4px;min-width:0}
+.card[data-stage="talks"],.card[data-stage="quoted"]{border-left-color:var(--amber)}
+.card[data-stage="won"]{border-left-color:var(--info)}
+.card[data-stage="paid"]{border-left-color:var(--ok)}
+.card .n{font-weight:700;line-height:1.3}
+.card .c{color:var(--muted);font-size:13px}
+.card .val{font-family:var(--mono);font-size:13px;color:var(--amber-ink)}
+.card .next{font-size:13px;border-top:1px dashed var(--line);padding-top:6px;margin-top:2px}
+.card .next span{color:var(--muted)}
+.move{display:flex;gap:6px;margin-top:4px}
+.empty-col{color:var(--muted);font-size:13px;padding:8px 4px}
+
+button{font:inherit;cursor:pointer}
+.btn{background:transparent;border:1px solid var(--line);color:var(--fg);border-radius:4px;padding:3px 9px;font-size:12px}
+.btn:hover{border-color:var(--amber)}
+.btn:focus-visible,.chip:focus-visible,.tick:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+
+/* two col */
+.split{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:28px}
+@media (max-width:860px){.split{grid-template-columns:minmax(0,1fr)}}
+section{display:grid;gap:12px;align-content:start;min-width:0}
+
+.group{border:1px solid var(--line);border-radius:6px;background:var(--panel);overflow:hidden}
+.group-h{padding:8px 12px;font-weight:700;font-size:13px;background:var(--panel2);border-bottom:1px solid var(--line);display:flex;justify-content:space-between}
+.group-h span{color:var(--muted);font-weight:400;font-family:var(--mono);font-size:12px}
+.task{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px;align-items:start;padding:10px 12px;border-bottom:1px solid var(--line)}
+.task:last-child{border-bottom:0}
+.task.done .t{text-decoration:line-through;color:var(--muted)}
+.tick{width:18px;height:18px;margin-top:2px;border:1.5px solid var(--muted);border-radius:3px;background:transparent;padding:0;display:grid;place-items:center;color:var(--on-amber)}
+.tick[aria-pressed="true"]{background:var(--amber);border-color:var(--amber)}
+.tick:disabled{cursor:default}
+.t{min-width:0}
+.t .sub{font-size:12px;color:var(--muted)}
+.due{font-family:var(--mono);font-size:12px;white-space:nowrap;padding:2px 7px;border-radius:3px;border:1px solid var(--line);color:var(--muted)}
+.due.soon{color:var(--warn);border-color:var(--warn)}
+.due.late{color:var(--bad);border-color:var(--bad)}
+
+.job{display:grid;grid-template-columns:64px minmax(0,1fr);gap:12px;padding:12px;border-bottom:1px solid var(--line)}
+.job:last-child{border-bottom:0}
+.date{font-family:var(--display);text-align:center;line-height:1;border:1px solid var(--line);border-radius:4px;padding:6px 0;align-self:start}
+.date .d{font-size:24px}
+.date .m{font-size:12px;color:var(--muted);letter-spacing:.06em}
+.date.tbc{color:var(--muted);font-size:14px;padding:12px 0}
+.job .n{font-weight:700}
+.job .sub{font-size:13px;color:var(--muted)}
+.pill{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.04em;padding:1px 7px;border-radius:3px;border:1px solid currentColor;margin-right:6px}
+.pill.upcoming{color:var(--amber-ink)} .pill.tbc{color:var(--muted)} .pill.done{color:var(--ok)} .pill.invoiced{color:var(--info)} .pill.owed{color:var(--warn)}
+
+/* contacts */
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{background:transparent;border:1px solid var(--line);color:var(--fg);border-radius:20px;padding:4px 12px;font-size:13px}
+.chip[aria-pressed="true"]{background:var(--amber);border-color:var(--amber);color:var(--on-amber);font-weight:700}
+.table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:6px;background:var(--panel)}
+table{border-collapse:collapse;width:100%;min-width:760px;font-size:14px}
+th{text-align:left;font-weight:600;color:var(--muted);font-size:12px;padding:9px 12px;background:var(--panel2);border-bottom:1px solid var(--line)}
+td{padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+tr:last-child td{border-bottom:0}
+td .mono{font-family:var(--mono);font-size:12.5px;user-select:all}
+.status{font-size:12px;font-weight:700;white-space:nowrap}
+.status.client{color:var(--ok)} .status.talks{color:var(--amber-ink)} .status.contact{color:var(--info)} .status.reach{color:var(--warn)} .status.partner{color:var(--fg)} .status.team{color:var(--muted)}
+
+/* outreach */
+.meters{display:grid;gap:10px}
+.meter{display:grid;grid-template-columns:minmax(140px,1.2fr) repeat(3,minmax(70px,.6fr)) minmax(120px,1.4fr);gap:12px;align-items:center;padding:12px;border:1px solid var(--line);border-radius:6px;background:var(--panel)}
+.meter .ch{font-weight:700}
+.meter .ch small{display:block;font-weight:400;font-size:12px;color:var(--muted)}
+.meter .num{font-family:var(--display);font-size:24px;line-height:1;font-variant-numeric:tabular-nums}
+.meter .num small{display:block;font-family:var(--body);font-size:11px;color:var(--muted);margin-top:3px}
+.bar{height:8px;background:var(--panel2);border:1px solid var(--line);border-radius:4px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--amber)}
+.rate{font-family:var(--mono);font-size:12px;color:var(--muted);margin-top:4px}
+@media (max-width:700px){.meter{grid-template-columns:repeat(3,minmax(0,1fr))}.meter .ch,.meter .rbox{grid-column:1/-1}}
+
+.note{color:var(--muted);font-size:13px}
+.empty{padding:16px 12px;color:var(--muted);font-size:14px}
+.ro-banner{font-size:13px;color:var(--muted)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <h1>OD <b>CONTROLS</b> HQ</h1>
+    <div class="stamp"><span class="lamp" id="lamp"></span><span id="stamp">Connecting…</span><div id="mode" class="ro-banner"></div></div>
+  </header>
+
+  <div class="readouts" aria-label="Summary">
+    <div class="ro"><div class="v" id="r-pipe">—</div><div class="l">Live deals in pipeline</div></div>
+    <div class="ro" id="ro-owed"><div class="v" id="r-owed">—</div><div class="l">Owed to us</div></div>
+    <div class="ro"><div class="v" id="r-jobs">—</div><div class="l">Upcoming jobs</div></div>
+    <div class="ro" id="ro-tasks"><div class="v" id="r-tasks">—</div><div class="l">Open to-dos</div></div>
+  </div>
+
+  <section>
+    <h2>Pipeline <span class="count" id="c-pipe"></span></h2>
+    <div class="board-scroll"><div class="board" id="board"></div></div>
+  </section>
+
+  <div class="split">
+    <section>
+      <h2>To-do <span class="count" id="c-tasks"></span></h2>
+      <div id="tasks" class="meters"><div class="group"><div class="empty">To-dos will show here, grouped by who owns them.</div></div></div>
+    </section>
+    <section>
+      <h2>Jobs <span class="count" id="c-jobs"></span></h2>
+      <div class="group" id="jobs"><div class="empty">Booked and upcoming site jobs will show here.</div></div>
+    </section>
+  </div>
+
+  <section>
+    <h2>Contacts <span class="count" id="c-contacts"></span></h2>
+    <div class="chips" id="filters" role="group" aria-label="Filter contacts"></div>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Name</th><th>Company</th><th>Status</th><th>Phone / email</th><th>Notes</th></tr></thead>
+      <tbody id="contacts"><tr><td colspan="5" class="empty">Clients, leads and people to reach out to will show here.</td></tr></tbody>
+    </table></div>
+  </section>
+
+  <section>
+    <h2>Outreach</h2>
+    <div class="meters" id="outreach"><div class="group"><div class="empty">Outreach numbers per channel will show here.</div></div></div>
+  </section>
+</div>
+
+<script>
+const STAGES=[["contacted","In contact"],["talks","In talks"],["quoted","Quoted"],["won","Won / owed"],["paid","Paid"]];
+const STATUS={client:"Client",talks:"In talks",contact:"In contact",reach:"To reach out",partner:"Partner",team:"Team"};
+const state={pipeline:[],jobs:[],contacts:[],tasks:[],outreach:[],meta:null,canWrite:false,filter:"all"};
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const gbp=n=>"£"+Number(n).toLocaleString("en-GB",{maximumFractionDigits:0});
+const MON=["JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEP","OCT","NOV","DEC"];
+function parseD(s){if(!s)return null;const d=new Date(s+"T00:00:00");return isNaN(d)?null:d}
+function today(){const d=new Date();d.setHours(0,0,0,0);return d}
+function fmtD(d){return d.getDate()+" "+MON[d.getMonth()].charAt(0)+MON[d.getMonth()].slice(1).toLowerCase()}
+
+let db=null;
+function renderAll(){renderReadouts();renderBoard();renderTasks();renderJobs();renderContacts();renderOutreach();renderStamp()}
+
+function renderStamp(){
+  const u=state.meta&&state.meta.updated?new Date(state.meta.updated):null;
+  $("stamp").textContent=u&&!isNaN(u)?"Updated "+fmtD(u)+", "+u.toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"}):"Live";
+}
+function renderReadouts(){
+  const live=state.pipeline.filter(p=>p.stage!=="paid");
+  $("r-pipe").textContent=live.length;
+  const owed=state.pipeline.filter(p=>p.stage==="won"&&p.owed).reduce((a,p)=>a+Number(p.owed||0),0);
+  $("r-owed").textContent=owed?gbp(owed):"£0";
+  $("ro-owed").classList.toggle("alert",owed>0);
+  $("r-jobs").textContent=state.jobs.filter(j=>j.status==="upcoming"||j.status==="tbc").length;
+  const open=state.tasks.filter(t=>!t.done);
+  $("r-tasks").textContent=open.length;
+  const late=open.some(t=>{const d=parseD(t.due);return d&&d<today()});
+  $("ro-tasks").classList.toggle("alert",late);
+}
+function renderBoard(){
+  $("c-pipe").textContent=state.pipeline.length?state.pipeline.length+" deals":"";
+  $("board").innerHTML=STAGES.map(([k,label],i)=>{
+    const items=state.pipeline.filter(p=>p.stage===k).sort((a,b)=>(b.updated||"").localeCompare(a.updated||""));
+    return `<div class="col" data-stage="${k}"><div class="col-h">${label}<small>${items.length}</small></div>${
+      items.length?items.map(p=>`<div class="card" data-stage="${k}">
+        <div class="n">${esc(p.name)}</div>
+        ${p.company?`<div class="c">${esc(p.company)}</div>`:""}
+        ${p.value?`<div class="val">${esc(p.value)}</div>`:""}
+        ${p.owed?`<div class="val" style="color:var(--warn)">Owed ${gbp(p.owed)}</div>`:""}
+        ${p.next?`<div class="next"><span>Next: </span>${esc(p.next)}</div>`:""}
+        ${state.canWrite?`<div class="move">${i>0?`<button class="btn" data-move="${esc(p.id)}" data-to="${STAGES[i-1][0]}" aria-label="Move back to ${STAGES[i-1][1]}">◀ ${STAGES[i-1][1]}</button>`:""}${i<STAGES.length-1?`<button class="btn" data-move="${esc(p.id)}" data-to="${STAGES[i+1][0]}" aria-label="Move to ${STAGES[i+1][1]}">${STAGES[i+1][1]} ▶</button>`:""}</div>`:""}
+      </div>`).join(""):`<div class="empty-col">Nothing here yet</div>`}</div>`;
+  }).join("");
+}
+function dueBadge(t){
+  const d=parseD(t.due); if(!d) return "";
+  const diff=(d-today())/864e5; let cls=""; if(!t.done){if(diff<0)cls="late";else if(diff<=7)cls="soon";}
+  return `<span class="due ${cls}">${diff<0&&!t.done?"Overdue ":""}${fmtD(d)}</span>`;
+}
+function renderTasks(){
+  const open=state.tasks.filter(t=>!t.done).length;
+  $("c-tasks").textContent=state.tasks.length?open+" open":"";
+  if(!state.tasks.length){$("tasks").innerHTML=`<div class="group"><div class="empty">To-dos will show here, grouped by who owns them.</div></div>`;return}
+  const owners=["Jaydon","Bafana","Both"];
+  const extra=[...new Set(state.tasks.map(t=>t.owner).filter(o=>!owners.includes(o)))];
+  $("tasks").innerHTML=[...owners,...extra].map(o=>{
+    const list=state.tasks.filter(t=>(t.owner||"Both")===o).sort((a,b)=>(a.done-b.done)||((a.due||"9999").localeCompare(b.due||"9999")));
+    if(!list.length)return "";
+    return `<div class="group"><div class="group-h">${esc(o)}<span>${list.filter(t=>!t.done).length} open</span></div>${list.map(t=>`
+      <div class="task ${t.done?"done":""}">
+        <button class="tick" aria-pressed="${!!t.done}" aria-label="${t.done?"Mark not done":"Mark done"}: ${esc(t.title)}" data-tick="${esc(t.id)}" ${state.canWrite?"":"disabled"}>${t.done?"✓":""}</button>
+        <div class="t"><div>${esc(t.title)}</div>${t.area||t.notes?`<div class="sub">${esc([t.area,t.notes].filter(Boolean).join(". "))}</div>`:""}</div>
+        ${dueBadge(t)}
+      </div>`).join("")}</div>`;
+  }).join("");
+}
+function renderJobs(){
+  const order={upcoming:0,tbc:1,invoiced:2,done:3};
+  const list=[...state.jobs].sort((a,b)=>(order[a.status]??4)-(order[b.status]??4)||((a.date||"9999").localeCompare(b.date||"9999")));
+  $("c-jobs").textContent=list.length?list.length+" jobs":"";
+  if(!list.length){$("jobs").innerHTML=`<div class="empty">Booked and upcoming site jobs will show here.</div>`;return}
+  const label={upcoming:"UPCOMING",tbc:"DATE TBC",done:"DONE",invoiced:"INVOICED"};
+  $("jobs").innerHTML=list.map(j=>{const d=parseD(j.date);return `<div class="job">
+    ${d?`<div class="date"><div class="d">${d.getDate()}</div><div class="m">${MON[d.getMonth()]}</div></div>`:`<div class="date tbc">TBC</div>`}
+    <div style="min-width:0"><div class="n">${esc(j.title)}</div>
+    <div class="sub">${esc([j.client,j.site].filter(Boolean).join(", "))}</div>
+    <div style="margin-top:6px"><span class="pill ${esc(j.status)}">${label[j.status]||esc(j.status)}</span>${j.value?`<span class="sub">${esc(j.value)}</span>`:""}</div>
+    ${j.notes?`<div class="sub" style="margin-top:4px">${esc(j.notes)}</div>`:""}</div></div>`}).join("");
+}
+function renderContacts(){
+  const counts={};state.contacts.forEach(c=>counts[c.status]=(counts[c.status]||0)+1);
+  const keys=["all",...Object.keys(STATUS).filter(k=>counts[k])];
+  $("filters").innerHTML=keys.map(k=>`<button class="chip" data-filter="${k}" aria-pressed="${state.filter===k}">${k==="all"?"All "+state.contacts.length:STATUS[k]+" "+counts[k]}</button>`).join("");
+  $("c-contacts").textContent=state.contacts.length?state.contacts.length+" people":"";
+  const list=state.contacts.filter(c=>state.filter==="all"||c.status===state.filter).sort((a,b)=>Object.keys(STATUS).indexOf(a.status)-Object.keys(STATUS).indexOf(b.status)||(a.name||"").localeCompare(b.name||""));
+  if(!list.length){$("contacts").innerHTML=`<tr><td colspan="5" class="empty">Clients, leads and people to reach out to will show here.</td></tr>`;return}
+  $("contacts").innerHTML=list.map(c=>`<tr>
+    <td><strong>${esc(c.name)}</strong>${c.role?`<div class="note">${esc(c.role)}</div>`:""}</td>
+    <td>${esc(c.company||"")}</td>
+    <td><span class="status ${esc(c.status)}">${STATUS[c.status]||esc(c.status)}</span></td>
+    <td>${c.phone?`<div class="mono">${esc(c.phone)}</div>`:""}${c.email?`<div class="mono">${esc(c.email)}</div>`:""}${!c.phone&&!c.email?`<span class="note">Not added</span>`:""}</td>
+    <td class="note">${esc(c.notes||"")}</td></tr>`).join("");
+}
+function renderOutreach(){
+  const list=[...state.outreach].sort((a,b)=>(a.order??9)-(b.order??9));
+  if(!list.length){$("outreach").innerHTML=`<div class="group"><div class="empty">Outreach numbers per channel will show here.</div></div>`;return}
+  const n=v=>v===null||v===undefined?"—":v;
+  $("outreach").innerHTML=list.map(o=>{
+    const has=Number(o.sent)>0; const rate=has?Math.round((Number(o.replies)||0)/Number(o.sent)*100):null;
+    return `<div class="meter">
+      <div class="ch">${esc(o.channel)}${o.note?`<small>${esc(o.note)}</small>`:""}</div>
+      <div class="num">${n(o.sent)}<small>Sent</small></div>
+      <div class="num">${n(o.replies)}<small>Replied</small></div>
+      <div class="num">${n(o.booked)}<small>Booked</small></div>
+      <div class="rbox"><div class="bar"><i style="width:${rate??0}%"></i></div><div class="rate">${rate===null?"No sends logged yet":rate+"% reply rate"}</div></div>
+    </div>`}).join("");
+}
+
+document.addEventListener("click",async e=>{
+  const f=e.target.closest("[data-filter]"); if(f){state.filter=f.dataset.filter;renderContacts();return}
+  if(!db||!state.canWrite)return;
+  const m=e.target.closest("[data-move]");
+  if(m){m.disabled=true;try{await db.doc("pipeline/"+m.dataset.move).update({stage:m.dataset.to,updated:new Date().toISOString()});await touch()}catch(err){m.disabled=false}return}
+  const t=e.target.closest("[data-tick]");
+  if(t){const task=state.tasks.find(x=>x.id===t.dataset.tick);if(!task)return;t.disabled=true;try{await db.doc("tasks/"+task.id).update({done:!task.done});await touch()}catch(err){}t.disabled=false}
+});
+async function touch(){try{await db.doc("meta/info").set({updated:new Date().toISOString()})}catch(e){}}
+
+renderAll();
+(async()=>{
+  try{
+    const r=await fetch("data.json",{cache:"no-store"});const d=await r.json();
+    ["pipeline","jobs","contacts","tasks","outreach"].forEach(k=>state[k]=d[k]||[]);
+    state.meta=d.meta||null;
+    $("lamp").classList.add("on");$("mode").textContent="Snapshot from the repo";
+    renderAll();
+  }catch(e){$("stamp").textContent="Couldn't load data.json"}
+})();
+</script>
+
+</body></html>
