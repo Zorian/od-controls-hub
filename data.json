@@ -92,7 +92,7 @@
       "status": "upcoming",
       "value": "£3,540",
       "notes": "Thu 22 Oct, Bafana with all parts. Time TBC. £2k deposit paid, £1,540 due on completion",
-      "date": "2026-10-22"
+      "date": "2026-10-19"
     }
   ],
   "contacts": [
@@ -275,7 +275,7 @@
     },
     {
       "id": "maabc-ahu",
-      "date": "2026-10-22",
+      "date": "2026-10-19",
       "time": "",
       "title": "AHU upgrade install: MAABC",
       "type": "job",
@@ -285,6 +285,6 @@
     }
   ],
   "meta": {
-    "updated": "2026-10-18T22:40:00Z"
+    "updated": "2026-10-18T22:24:02.701Z"
   }
 }
