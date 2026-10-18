@@ -145,6 +145,13 @@
       "phone": "07393 698735",
       "email": "jethi.thomas@millenniumhotels.co.uk",
       "notes": "Trend BMS, has a contractor already. Health check Thu 22 Oct 11:30; pitch as backup"
+    },
+    {
+      "id": "yeepin",
+      "name": "Yeepin Ltd",
+      "company": "Yeepin Ltd",
+      "status": "client",
+      "notes": "First client. Paid in full"
     }
   ],
   "tasks": [
