@@ -43,7 +43,7 @@
       "company": "Mortlake Anglian & Alpha Boat Club (MAABC)",
       "stage": "won",
       "value": "£3,540 contract. £2,000 deposit received (inv 356)",
-      "next": "Schedule works. Invoice £1,540 balance on completion",
+      "next": "Install Thu 22 Oct (Bafana). Then invoice £1,540 balance",
       "updated": "2026-10-18T22:10:00Z"
     },
     {
@@ -89,9 +89,10 @@
       "title": "AHU upgrade: iSMA controller replacing VES ACX",
       "client": "MAABC (Dan George)",
       "site": "Mortlake",
-      "status": "tbc",
+      "status": "upcoming",
       "value": "£3,540",
-      "notes": "Deposit paid. Supply, install, panel mods, software, commissioning, handover. 6 month warranty."
+      "notes": "Thu 22 Oct, Bafana with all parts. Time TBC. £2k deposit paid, £1,540 due on completion",
+      "date": "2026-10-22"
     }
   ],
   "contacts": [
@@ -208,11 +209,12 @@
     },
     {
       "id": "maabc-schedule",
-      "title": "Order parts and book in the MAABC AHU upgrade",
-      "owner": "Both",
+      "title": "Confirm MAABC install time with Dan George for Thu 22 Oct",
+      "owner": "Jaydon",
       "area": "Jobs",
-      "notes": "Deposit received, so works can be scheduled",
-      "done": false
+      "notes": "Bafana has the parts. Fit around Millennium Hotels 11:30 in Slough",
+      "done": false,
+      "due": "2026-10-21"
     },
     {
       "id": "maabc-balance",
@@ -270,9 +272,19 @@
       "who": "Bafana",
       "location": "Millennium Hotels, Slough SL1 2YE",
       "description": "Site contact: Jethi Thomas, Chief Engineer, 07393 698735 (office 01753 516222). BMS: Trend. They already have a BMS contractor, so pitch OD Controls as their backup / on call contractor. Issue to look at: BMS controls. Access Mon to Thu, 9am to 2pm."
+    },
+    {
+      "id": "maabc-ahu",
+      "date": "2026-10-22",
+      "time": "",
+      "title": "AHU upgrade install: MAABC",
+      "type": "job",
+      "who": "Bafana",
+      "location": "Mortlake Anglian & Alpha Boat Club, Mortlake",
+      "description": "Dan George's job (inv 356). Bafana to bring all parts. Supply and install iSMA controller replacing obsolete VES ACX controls, panel mods, software, commissioning and handover. 6 month warranty. Time to confirm; same day as the Millennium Hotels visit in Slough at 11:30. On completion, invoice the £1,540 balance."
     }
   ],
   "meta": {
-    "updated": "2026-10-18T22:20:28.873Z"
+    "updated": "2026-10-18T22:40:00Z"
   }
 }
