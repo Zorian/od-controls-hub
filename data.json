@@ -186,7 +186,7 @@
     },
     {
       "area": "Sales",
-      "done": false,
+      "done": true,
       "notes": "£1,000 per site per year, 2 weekday visits",
       "owner": "Jaydon",
       "title": "Send Ryan Cooper bi-annual PPM quote",
@@ -273,6 +273,6 @@
     }
   ],
   "meta": {
-    "updated": "2026-10-18T22:20:26.091Z"
+    "updated": "2026-10-18T22:20:28.873Z"
   }
 }
