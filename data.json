@@ -201,7 +201,7 @@
     },
     {
       "area": "Admin",
-      "done": false,
+      "done": true,
       "owner": "Jaydon",
       "title": "Finish VAT registration for OD Controls Limited",
       "id": "vat"
@@ -273,6 +273,6 @@
     }
   ],
   "meta": {
-    "updated": "2026-10-18T22:19:59.043Z"
+    "updated": "2026-10-18T22:20:16.533Z"
   }
 }
