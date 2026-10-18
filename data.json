@@ -219,7 +219,7 @@
       "title": "Confirm MAABC install time with Dan George for Thu 22 Oct",
       "owner": "Jaydon",
       "area": "Jobs",
-      "notes": "Bafana has the parts. Fit around Millennium Hotels 11:30 in Slough",
+      "notes": "Fit around Millennium Hotels 11:30 in Slough",
       "done": false,
       "due": "2026-10-21"
     },
@@ -237,6 +237,15 @@
       "owner": "Jaydon",
       "area": "Finance",
       "notes": "Gothic Villa callout, 12 Oct. Due on receipt",
+      "done": false
+    },
+    {
+      "id": "maabc-parts",
+      "title": "Order parts for Dan George's AHU upgrade (MAABC)",
+      "owner": "Bafana",
+      "area": "Jobs",
+      "due": "2026-10-21",
+      "notes": "iSMA controller plus panel parts. Needed for the Thu 22 Oct install",
       "done": false
     }
   ],
@@ -292,6 +301,6 @@
     }
   ],
   "meta": {
-    "updated": "2026-10-18T22:24:02.701Z"
+    "updated": "2026-10-18T22:50:00Z"
   }
 }
