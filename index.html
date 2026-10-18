@@ -230,10 +230,6 @@ body.is-dragging{user-select:none;cursor:grabbing}
     </table></div>
   </section>
 
-  <section>
-    <h2>Outreach</h2>
-    <div class="meters" id="outreach"><div class="group"><div class="empty">Outreach numbers per channel will show here.</div></div></div>
-  </section>
 </div>
 
 <script>
@@ -249,7 +245,7 @@ function today(){const d=new Date();d.setHours(0,0,0,0);return d}
 function fmtD(d){return d.getDate()+" "+MON[d.getMonth()].charAt(0)+MON[d.getMonth()].slice(1).toLowerCase()}
 
 let db=null;
-function renderAll(){renderCal();renderReadouts();renderBoard();renderTasks();renderJobs();renderContacts();renderOutreach();renderStamp()}
+function renderAll(){renderCal();renderReadouts();renderBoard();renderTasks();renderJobs();renderContacts();renderStamp()}
 
 function renderStamp(){
   const u=state.meta&&state.meta.updated?new Date(state.meta.updated):null;
