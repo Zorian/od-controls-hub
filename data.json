@@ -31,11 +31,10 @@
     {
       "company": "BMS controller supply, install, programming",
       "name": "Yeepin Ltd",
-      "next": "Chase invoice 353 (£1,145)",
-      "owed": 1145,
-      "stage": "won",
-      "updated": "2026-10-18T08:00:00Z",
-      "value": "Inv 353 outstanding",
+      "next": "Offer a service plan",
+      "stage": "paid",
+      "updated": "2026-10-18T22:30:00Z",
+      "value": "Invoices 352 and 353 paid in full",
       "id": "yeepin"
     },
     {
@@ -130,7 +129,7 @@
     {
       "company": "Yeepin Ltd",
       "name": "Yeepin Ltd",
-      "notes": "First client. Inv 353 £1,145 outstanding",
+      "notes": "First client. Paid in full",
       "status": "client",
       "id": "yeepin"
     },
@@ -173,7 +172,7 @@
     },
     {
       "area": "Finance",
-      "done": false,
+      "done": true,
       "owner": "Jaydon",
       "title": "Chase Yeepin invoice 353 (£1,145)",
       "id": "chase-yeepin"
@@ -269,7 +268,7 @@
     }
   ],
   "meta": {
-    "updated": "2026-10-18T22:20:00Z"
+    "updated": "2026-10-18T22:30:00Z"
   },
   "events": [
     {
