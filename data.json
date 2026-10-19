@@ -248,6 +248,15 @@
       "due": "2026-10-21",
       "notes": "iSMA controller plus panel parts. Needed for the Thu 22 Oct install",
       "done": false
+    },
+    {
+      "id": "bafana-390",
+      "title": "Account for the £390 OD Controls sent you on 17 Oct",
+      "owner": "Bafana",
+      "area": "Finance",
+      "due": "2026-10-31",
+      "notes": "Said it was for parts. Send receipts or show what was bought and which job it was for",
+      "done": false
     }
   ],
   "outreach": [
@@ -302,6 +311,6 @@
     }
   ],
   "meta": {
-    "updated": "2026-10-18T22:55:00Z"
+    "updated": "2026-10-19T00:30:00Z"
   }
 }
