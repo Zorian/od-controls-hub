@@ -3,12 +3,11 @@
     {
       "company": "Highgate Property & Development (Gothic Villa, NW1)",
       "name": "Ryan Cooper",
-      "next": "Chase invoice 357 (£250)",
-      "stage": "won",
-      "updated": "2026-10-18T22:25:00Z",
-      "value": "Callout £500. £250 deposit paid, inv 357 balance due",
-      "id": "gothic-villa",
-      "owed": 250
+      "next": "Push the bi-annual PPM quote",
+      "stage": "paid",
+      "updated": "2026-10-19T11:45:00Z",
+      "value": "Callout £500 paid in full (inv 357)",
+      "id": "gothic-villa"
     },
     {
       "company": "Highgate Property & Development",
@@ -59,8 +58,8 @@
   "jobs": [
     {
       "client": "Highgate Property (Ryan Cooper)",
-      "notes": "Inv 357: £250 balance unpaid",
-      "status": "invoiced",
+      "notes": "Inv 357 paid in full",
+      "status": "done",
       "title": "LTHW radiator heating fault, Trend BMS",
       "id": "gothic-villa",
       "site": "Gothic Villa, Outer Circle, NW1 4HB",
@@ -122,7 +121,7 @@
     {
       "company": "Highgate Property & Development",
       "name": "Ryan Cooper",
-      "notes": "Owes £250 (inv 357, Gothic Villa callout). Asked for bi-annual PPM quote for his sites",
+      "notes": "Paid inv 357 in full. Asked for bi-annual PPM quote for his sites",
       "role": "Facilities Manager, many sites",
       "status": "client",
       "id": "ryan-cooper"
@@ -238,7 +237,7 @@
       "owner": "Jaydon",
       "area": "Finance",
       "notes": "Gothic Villa callout, 12 Oct. Due on receipt",
-      "done": false
+      "done": true
     },
     {
       "id": "maabc-parts",
@@ -311,6 +310,6 @@
     }
   ],
   "meta": {
-    "updated": "2026-10-19T00:30:00Z"
+    "updated": "2026-10-19T11:45:00Z"
   }
 }
